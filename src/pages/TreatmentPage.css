@@ -1,0 +1,148 @@
+.treatment-page {
+  min-height: 100vh;
+  background: #f4f7f0;
+}
+
+.treatment-nav {
+  height: 76px;
+  padding: 0 24px;
+  background: #1a3c2e;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.treatment-nav h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.treatment-dots {
+  background: #1a3c2e;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding-bottom: 20px;
+}
+
+.treatment-dots span {
+  width: 28px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.treatment-dots .active {
+  background: #52b788;
+}
+
+.treatment-content {
+  width: min(92%, 800px);
+  margin: 32px auto 60px;
+}
+
+.disease-summary,
+.when-section,
+.step-card {
+  background: white;
+  border: 0.5px solid #d4e0cc;
+  border-radius: 16px;
+}
+
+.disease-summary {
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.disease-summary p,
+.when-section p,
+.section-title {
+  color: #2d6a4f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  margin: 0 0 6px;
+}
+
+.disease-summary h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #1a2e1f;
+}
+
+.when-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.when-section strong {
+  font-size: 16px;
+}
+
+.steps-list {
+  display: grid;
+  gap: 16px;
+}
+
+.step-card {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 16px;
+}
+
+.step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2d6a4f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+
+.step-card h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #1a2e1f;
+}
+
+.step-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.warning-box {
+  margin-top: 12px;
+  background: #fff7e6;
+  color: #6f531f;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  border-left: 4px solid #d4a853;
+}
+
+@media (max-width: 768px) {
+  .treatment-content {
+    width: calc(100% - 32px);
+    margin: 20px auto 40px;
+  }
+
+  .when-section {
+    grid-template-columns: 1fr;
+  }
+
+  .step-card {
+    grid-template-columns: 32px 1fr;
+    padding: 16px;
+  }
+}
