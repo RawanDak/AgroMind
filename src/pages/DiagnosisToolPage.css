@@ -99,6 +99,7 @@ body {
 
   cursor: pointer;
 }
+
 .upload-card {
   width: min(92%, 520px);
   min-height: 150px;

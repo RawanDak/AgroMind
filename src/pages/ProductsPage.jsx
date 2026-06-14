@@ -1,8 +1,12 @@
 import "./ProductsPage.css";
-import { PiArrowLeft, PiShareNetwork, PiPlant } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import {
+  PiArrowLeft,
+  PiShareNetwork,
+  PiPlant,
+} from "react-icons/pi";
 
 function ProductCard({
-  number,
   name,
   badge,
   ingredient,
@@ -30,19 +34,24 @@ function ProductCard({
       </div>
 
       <h4>USAGE INSTRUCTIONS</h4>
+
       <ul>
         <li>Mix 1–2 ml per litre of water</li>
         <li>Spray all leaf surfaces — top and underside</li>
         <li>Apply every 7–10 days during active disease</li>
       </ul>
 
-      <div className="product-warning">{warning}</div>
+      <div className="product-warning">
+        {warning}
+      </div>
 
       <div className="match-score">
         <p>Match score</p>
+
         <div className="score-bar">
           <span style={{ width: `${score}%` }}></span>
         </div>
+
         <strong>{score}%</strong>
       </div>
     </section>
@@ -50,15 +59,22 @@ function ProductCard({
 }
 
 function ProductsPage() {
-  
+  const navigate = useNavigate();
+
   const diagnosis = JSON.parse(
     localStorage.getItem("diagnosisResult")
   );
+
   return (
     <div className="products-page">
       <nav className="products-nav">
-        <PiArrowLeft />
+        <PiArrowLeft
+          className="back-icon"
+          onClick={() => navigate(-1)}
+        />
+
         <h1>Recommended products</h1>
+
         <PiShareNetwork />
       </nav>
 
@@ -71,40 +87,42 @@ function ProductsPage() {
       <main className="products-content">
         <section className="products-summary">
           <PiPlant />
+
           <div>
             <p>
-             {diagnosis?.crop?.toUpperCase()}
-             {" · "}
-             {diagnosis?.disease_name}
+              {diagnosis?.crop?.toUpperCase()}
+              {" · "}
+              {diagnosis?.disease_name}
             </p>
+
             <h2>
-             {diagnosis?.recommended_products?.length || 0}
-             {" "}
-             products matched to your diagnosis
-           </h2>
+              {diagnosis?.recommended_products?.length || 0}
+              {" "}
+              products matched to your diagnosis
+            </h2>
           </div>
         </section>
 
         <div className="products-grid">
-  {diagnosis?.recommended_products?.map(
-    (product, index) => (
-      <div key={index}>
-        <p className="product-label">
-          PRODUCT {index + 1}
-        </p>
+          {diagnosis?.recommended_products?.map(
+            (product, index) => (
+              <div key={index}>
+                <p className="product-label">
+                  PRODUCT {index + 1}
+                </p>
 
-        <ProductCard
-          name={product.name}
-          badge={product.product_type}
-          ingredient={product.ingredients}
-          target={diagnosis.disease_name}
-          warning="Follow label instructions."
-          score={95}
-        />
-      </div>
-    )
-  )}
-</div>
+                <ProductCard
+                  name={product.name}
+                  badge={product.product_type}
+                  ingredient={product.ingredients}
+                  target={diagnosis.disease_name}
+                  warning="Follow label instructions."
+                  score={95}
+                />
+              </div>
+            )
+          )}
+        </div>
       </main>
     </div>
   );

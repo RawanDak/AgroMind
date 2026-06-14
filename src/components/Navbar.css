@@ -1,0 +1,96 @@
+.navbar {
+  height: 64px;
+  background: #123d2a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.brand {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand svg {
+  font-size: 22px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: white;
+  font-size: 22px;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+}
+
+.icon-link {
+  color: white;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.cart-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: #95D5B2;
+  color: #123d2a;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
