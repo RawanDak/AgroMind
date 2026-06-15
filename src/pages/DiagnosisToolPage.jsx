@@ -21,8 +21,13 @@ function DiagnosisToolPage() {
     formData.append("file", file);
 
     try {
+      const token = localStorage.getItem("token");
+
       const response = await fetch("http://localhost:8000/diagnose", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 

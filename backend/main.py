@@ -48,12 +48,11 @@ from jose import JWTError, jwt
 # Does NOT raise 401 — allows unauthenticated access to /diagnose.
 _bearer = HTTPBearer(auto_error=False)
 
-def get_optional_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+def get_user(
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer),
     db: Session = Depends(get_db),
-) -> Optional[User]:
-    if credentials is None:
-        return None
+) -> User:
+    
     try:
         payload  = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
@@ -167,7 +166,7 @@ def root():
 async def diagnose(
     file:         UploadFile     = File(...),
     db:           Session        = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_user),
+    current_user: User = Depends(get_user),
 ):
     """
     Main endpoint — upload a leaf image, get full diagnosis back.
