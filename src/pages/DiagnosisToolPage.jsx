@@ -2,17 +2,30 @@ import "./DiagnosisToolPage.css";
 import { PiPlant, PiImage, PiCamera } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import { useState } from "react";
 
 function DiagnosisToolPage() {
   const navigate = useNavigate();
 
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-spinner"></div>
+        <h2>Analyzing your crop...</h2>
+      </div>
+    );
+  }
 
   async function handleImageUpload(event) {
     const file = event.target.files[0];
 
     if (!file) return;
+
+    setLoading(true);
 
     const imageUrl = URL.createObjectURL(file);
     localStorage.setItem("cropImage", imageUrl);
