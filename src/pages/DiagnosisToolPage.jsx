@@ -3,6 +3,7 @@ import { PiPlant, PiImage, PiCamera } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { useState } from "react";
+import Navbar from "../components/Navbar";
 
 function DiagnosisToolPage() {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ function DiagnosisToolPage() {
 
   return (
     <div className="phone">
+      <Navbar />
       <section className="hero">
         <div className="logo-circle">
           <PiPlant />

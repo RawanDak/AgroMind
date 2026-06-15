@@ -22,7 +22,7 @@ function Navbar() {
 
     const totalItems = cart.reduce(
       (sum, item) => sum + (item.quantity || 1),
-      0
+      0,
     );
 
     setCartCount(totalItems);
@@ -58,7 +58,6 @@ function Navbar() {
 
       <div className="nav-links">
         <Link to="/">Shop</Link>
-        <Link to="/products">Products</Link>
         <Link to="/tool">AI Diagnosis Tool</Link>
 
         {!isLoggedIn ? (
@@ -74,8 +73,6 @@ function Navbar() {
       </div>
 
       <div className="nav-icons">
-        <PiMagnifyingGlass />
-
         {isLoggedIn ? (
           <div className="profile-section">
             <PiUser />
@@ -92,11 +89,7 @@ function Navbar() {
         <Link to="/cart" className="cart-icon-container">
           <PiShoppingCart />
 
-          {cartCount > 0 && (
-            <span className="cart-badge">
-              {cartCount}
-            </span>
-          )}
+          {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
         </Link>
       </div>
     </nav>
