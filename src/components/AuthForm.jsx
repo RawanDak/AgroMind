@@ -8,6 +8,7 @@ function AuthForm({
   onSubmit,
   buttonText,
   message,
+  children,
 }) {
   return (
     <div className="auth-page">
@@ -29,6 +30,7 @@ function AuthForm({
         <button type="submit">{buttonText}</button>
 
         {message && <p className="auth-message">{message}</p>}
+        {children}
       </form>
     </div>
   );

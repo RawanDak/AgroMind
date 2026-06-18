@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AuthForm from "../components/AuthForm";
 import { registerUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const [values, setValues] = useState({
@@ -10,6 +11,7 @@ function RegisterPage() {
   });
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setValues({
@@ -24,6 +26,7 @@ function RegisterPage() {
     try {
       await registerUser(values);
       setMessage("Registration successful!");
+      navigate("/login");
     } catch (error) {
       setMessage("Registration failed.");
     }
@@ -59,7 +62,11 @@ function RegisterPage() {
       onSubmit={handleSubmit}
       buttonText="Register"
       message={message}
-    />
+    >
+      <p className="auth-switch">
+        Already have an account? <a href="/login">Login</a>
+      </p>
+    </AuthForm>
   );
 }
 

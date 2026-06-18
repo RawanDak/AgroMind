@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 import { loginUser } from "../services/authService";
 
@@ -59,7 +59,11 @@ function LoginPage() {
       onSubmit={handleSubmit}
       buttonText="Login"
       message={message}
-    />
+    >
+      <p className="auth-switch">
+        Don't have an account? <Link to="/register">Register</Link>
+      </p>
+    </AuthForm>
   );
 }
 
