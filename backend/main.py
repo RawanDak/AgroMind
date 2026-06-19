@@ -53,6 +53,9 @@ def get_user(
     db: Session = Depends(get_db),
 ) -> User:
     
+    if credentials is None:
+        return None
+
     try:
         payload  = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
@@ -115,11 +118,14 @@ Return ONLY valid JSON. Do not use markdown. Do not include any text outside the
   "explanation": "string",
   "disease_type": "fungal | bacterial | viral | pest | nutrient deficiency | unknown",
   "spread_rate": "slow | moderate | fast",
-  "severity": "mild | moderate | severe",
+  "severity_score": 0,
+  "severity": "Low | Medium | High",
   "symptoms": ["symptom 1", "symptom 2", "symptom 3"]
 }
 
 Instructions:
+- severity_score must be an integer from 0 to 100 based only on visible disease damage.
+- Use 0-29 = Low, 30-69 = Medium, 70-100 = High.
 - Make your best estimate of the crop type.
 - Make your best estimate of the growth stage.
 - Do NOT use "unknown" unless the image contains no visible plant.
@@ -222,11 +228,12 @@ async def diagnose(
             "explanation":  vision.get("explanation"),
             "disease_type": vision.get("disease_type"),
             "spread_rate":  vision.get("spread_rate"),
+            "severity_score": vision.get("severity_score"),
             "symptoms":     vision.get("symptoms", []),
             "status":               rag_result.get("status",   "diseased"),
             "pathogen":             rag_result.get("pathogen", ""),
             "summary":              rag_result.get("summary",  ""),
-            "severity":             rag_result.get("severity") or vision.get("severity"),
+            "severity":             vision.get("severity"),
             "treatment":            rag_result.get("treatment",            []),
             "recommended_products": rag_result.get("recommended_products", []),
             "prevention":           rag_result.get("prevention",           []),
