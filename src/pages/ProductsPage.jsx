@@ -76,15 +76,7 @@ function ProductCard({ product, target }) {
         {product.caution || "Follow label instructions."}
       </div>
 
-      <div className="match-score">
-        <p>Match score</p>
-
-        <div className="score-bar">
-          <span style={{ width: "95%" }}></span>
-        </div>
-
-        <strong>95%</strong>
-      </div>
+      
 
       <button className="cart-btn" onClick={handleAddToCart}>
         Add to Cart
