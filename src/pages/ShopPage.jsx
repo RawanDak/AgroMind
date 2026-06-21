@@ -27,7 +27,7 @@ function ShopPage() {
   ];
 
   useEffect(() => {
-    fetch("http://98.80.119.7:8000/products")
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((response) => response.json())
       .then((data) => {
         setProducts(data);

@@ -24,10 +24,9 @@ dist-ssr
 *.sw?
 
 .venv/
-.env
+backend/.env
 ProductCatalog_tran.xlsx
 venv/
 __pycache__/
 *.pyc
-.env
 product_index.pkl

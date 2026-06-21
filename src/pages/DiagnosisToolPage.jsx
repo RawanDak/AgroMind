@@ -37,7 +37,7 @@ function DiagnosisToolPage() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://98.80.119.7:8000/diagnose", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/diagnose`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
