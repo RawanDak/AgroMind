@@ -88,10 +88,13 @@ Create a PostgreSQL database named:
 agromind
 ```
 
-Create a .env file and add your configuration:
+Create a `.env` file in the `backend` directory and add the required configuration:
 
-API_KEY=your_api_key_here
-DATABASE_URL=postgresql://username:password@localhost:5432/agromind
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+DATABASE_URL=postgresql://postgres:YOUR_POSTGRES_PASSWORD@localhost:5432/agromind
+SECRET_KEY=your_secret_key_here
+```
 
 Generate the TF-IDF product index:
 
@@ -155,7 +158,7 @@ Example:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
-DATABASE_URL=postgresql://username:password@localhost:5432/agromind
+DATABASE_URL=postgresql://postgres:YOUR_POSTGRES_PASSWORD@localhost:5432/agromind
 ```
 
 ## Running the Project
