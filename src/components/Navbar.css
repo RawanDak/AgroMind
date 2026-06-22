@@ -94,3 +94,32 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Mobile navbar fix */
+@media (max-width: 768px) {
+  .navbar {
+    height: auto;
+    padding: 14px 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .navbar-logo {
+    font-size: 24px;
+    line-height: 1.1;
+    flex: 1 1 100%;
+  }
+
+  .navbar-links {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .navbar-links a {
+    font-size: 18px;
+  }
+}
