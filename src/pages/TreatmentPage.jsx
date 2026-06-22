@@ -37,18 +37,6 @@ function TreatmentPage() {
           <h2>{diagnosis?.disease_name}</h2>
         </section>
 
-        <section className="when-section">
-          <div>
-            <p>START TREATMENT</p>
-            <strong>Within 24 hrs</strong>
-          </div>
-
-          <div>
-            <p>BEST TIME OF DAY</p>
-            <strong>Early morning</strong>
-          </div>
-        </section>
-
         <h3 className="section-title">TREATMENT STEPS</h3>
 
         <section className="steps-list">
