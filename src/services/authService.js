@@ -1,4 +1,4 @@
-const API_URL = "http://98.80.119.7:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function registerUser({ email, password, fullName }) {
   const response = await fetch(`${API_URL}/auth/register`, {

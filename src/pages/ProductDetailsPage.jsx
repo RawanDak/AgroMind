@@ -8,7 +8,7 @@ function ProductDetailsPage() {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch(`http://98.80.119.7:8000/products/${productId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`)
       .then((response) => response.json())
       .then((data) => setProduct(data))
       .catch((error) => console.error("Error loading product:", error));

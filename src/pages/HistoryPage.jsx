@@ -22,7 +22,7 @@ function HistoryPage() {
     setLoading(true);
 
     fetch(
-      `http://98.80.119.7:8000/history?skip=${
+      `${import.meta.env.VITE_API_URL}/history?skip=${
         (page - 1) * limit
       }&limit=${limit}&sort=${sortOrder}`,
       {
