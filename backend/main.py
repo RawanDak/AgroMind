@@ -36,9 +36,10 @@ from fastapi import FastAPI, UploadFile, File, Depends, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from openai import OpenAI
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from database import get_db, create_tables, Diagnosis, Product
+from database import get_db, create_tables, Diagnosis, Product, CartItem, Order, OrderItem
 from auth import router as auth_router, get_current_user, User, SECRET_KEY, ALGORITHM
 from query import DiseaseRAG, CLASS_MAP, _healthy_response
 from jose import JWTError, jwt
@@ -401,3 +402,209 @@ def get_product(product_id: str, db: Session = Depends(get_db)):
         "dilution":     product.dilution,
         "price":         product.price,
     }
+# ─────────────────────────────────────────────────────────────────────────────
+#  CART  (requires login)
+# ─────────────────────────────────────────────────────────────────────────────
+ 
+class CartAddRequest(BaseModel):
+    product_id: str
+    quantity:   int = 1
+ 
+ 
+class CartUpdateRequest(BaseModel):
+    quantity: int
+ 
+ 
+def _cart_row(item: CartItem) -> dict:
+    product = item.product
+    return {
+        "id":           item.id,
+        "product_id":   item.product_id,
+        "name":         product.name if product else None,
+        "price":        product.price if product else None,
+        "quantity":     item.quantity,
+        "subtotal":     (product.price or 0) * item.quantity if product else None,
+        "added_at":     item.added_at.isoformat(),
+    }
+ 
+ 
+@app.get("/cart")
+def get_cart(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Return everything currently in the logged-in user's cart."""
+    rows = db.query(CartItem).filter(CartItem.user_id == current_user.id).all()
+    items = [_cart_row(r) for r in rows]
+    return {
+        "items": items,
+        "total": sum(i["subtotal"] or 0 for i in items),
+    }
+ 
+ 
+@app.post("/cart/add")
+def add_to_cart(
+    body: CartAddRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Add a product to the cart, or bump quantity if it's already there."""
+    product = db.query(Product).filter(Product.product_id == body.product_id).first()
+    if not product:
+        return {"error": "Product not found"}
+ 
+    existing = db.query(CartItem).filter(
+        CartItem.user_id == current_user.id,
+        CartItem.product_id == body.product_id,
+    ).first()
+ 
+    if existing:
+        existing.quantity += body.quantity
+    else:
+        existing = CartItem(
+            id=str(uuid.uuid4()),
+            user_id=current_user.id,
+            product_id=body.product_id,
+            quantity=body.quantity,
+        )
+        db.add(existing)
+ 
+    db.commit()
+    db.refresh(existing)
+    return _cart_row(existing)
+ 
+ 
+@app.patch("/cart/{product_id}")
+def update_cart_item(
+    product_id: str,
+    body: CartUpdateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Set the quantity for one product in the cart (removes it if quantity <= 0)."""
+    item = db.query(CartItem).filter(
+        CartItem.user_id == current_user.id,
+        CartItem.product_id == product_id,
+    ).first()
+    if not item:
+        return {"error": "Item not in cart"}
+ 
+    if body.quantity <= 0:
+        db.delete(item)
+        db.commit()
+        return {"removed": product_id}
+ 
+    item.quantity = body.quantity
+    db.commit()
+    db.refresh(item)
+    return _cart_row(item)
+ 
+ 
+@app.delete("/cart/{product_id}")
+def remove_from_cart(
+    product_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Remove one product from the cart entirely."""
+    item = db.query(CartItem).filter(
+        CartItem.user_id == current_user.id,
+        CartItem.product_id == product_id,
+    ).first()
+    if not item:
+        return {"error": "Item not in cart"}
+    db.delete(item)
+    db.commit()
+    return {"removed": product_id}
+ 
+ 
+@app.delete("/cart")
+def clear_cart(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Empty the whole cart."""
+    db.query(CartItem).filter(CartItem.user_id == current_user.id).delete()
+    db.commit()
+    return {"cleared": True}
+ 
+ 
+# ─────────────────────────────────────────────────────────────────────────────
+#  ORDERS  (requires login)
+# ─────────────────────────────────────────────────────────────────────────────
+ 
+def _order_row(order: Order) -> dict:
+    return {
+        "order_id":    order.id,
+        "created_at":  order.created_at.isoformat(),
+        "status":      order.status,
+        "total_price": order.total_price,
+        "items": [
+            {
+                "product_id": i.product_id,
+                "name":       i.product.name if i.product else None,
+                "quantity":   i.quantity,
+                "price":      i.price_at_purchase,
+                "subtotal":   (i.price_at_purchase or 0) * i.quantity,
+            }
+            for i in order.items
+        ],
+    }
+ 
+ 
+@app.post("/orders/checkout")
+def checkout(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """
+    Turn everything in the cart into a completed Order, snapshotting
+    each product's current price, then empty the cart.
+    """
+    cart_rows = db.query(CartItem).filter(CartItem.user_id == current_user.id).all()
+    if not cart_rows:
+        return {"error": "Cart is empty"}
+ 
+    order = Order(
+        id=str(uuid.uuid4()),
+        user_id=current_user.id,
+        status="completed",
+    )
+    db.add(order)
+ 
+    total = 0.0
+    for cart_item in cart_rows:
+        price = cart_item.product.price if cart_item.product else 0
+        total += (price or 0) * cart_item.quantity
+        db.add(OrderItem(
+            id=str(uuid.uuid4()),
+            order_id=order.id,
+            product_id=cart_item.product_id,
+            quantity=cart_item.quantity,
+            price_at_purchase=price,
+        ))
+        db.delete(cart_item)
+ 
+    order.total_price = total
+    db.commit()
+    db.refresh(order)
+    return _order_row(order)
+ 
+ 
+@app.get("/orders")
+def get_orders(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Purchase history for the logged-in user, newest first."""
+    rows = (
+        db.query(Order)
+        .filter(Order.user_id == current_user.id)
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+    return [_order_row(o) for o in rows]
+ 
+ 
+@app.get("/orders/{order_id}")
+def get_order(
+    order_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """One order's full detail."""
+    order = db.query(Order).filter(
+        Order.id == order_id,
+        Order.user_id == current_user.id,
+    ).first()
+    if not order:
+        return {"error": "Order not found"}
+    return _order_row(order)
