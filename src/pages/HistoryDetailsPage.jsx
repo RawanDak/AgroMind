@@ -10,7 +10,7 @@ function HistoryDetailsPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch(`${import.meta.env.VITE_API_URL}/${diagnosisId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/history/${diagnosisId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
