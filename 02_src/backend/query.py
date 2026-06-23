@@ -398,12 +398,8 @@ class DiseaseRAG:
 
     # ── Layer 2: TF-IDF vector search ────────────────────────────────────────
 
-    def _build_query(self, crop: str, disease: str) -> str:
-        return (
-            f"fungicide pesticide treatment for {disease} on {crop}. "
-            f"Controls fungal bacterial viral disease blight mold spot rot on {crop}. "
-            f"Applicable to vegetables {crop} plants."
-        )
+    def _build_query(self, crop, disease):
+        return f"{crop} {disease} treatment"
 
     def _rerank(self, meta: dict, cosine: float, crop: str, disease: str) -> float:
         score = cosine
