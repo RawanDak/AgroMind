@@ -206,11 +206,7 @@ DATABASE_URL=postgresql://postgres:1993@postgres:5432/agromind
 
 ### Build and Start Containers
 
-Navigate to the source directory:
-
-```bash
-cd 02_src
-```
+Navigate to the root directory (src):
 
 ```bash
 docker compose up --build
